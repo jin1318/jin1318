@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인터랙티브 정기기부 캠페인</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: #0f172a; /* 감각적인 어두운 배경 */
+            color: #f8fafc;
+            line-height: 1.6;
+            padding: 20px 16px;
+            max-width: 600px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        /* 메인 히어로 섹션 */
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        .hero p {
+            font-size: 15px;
+            color: #94a3b8;
+        }
+        .scroll-down {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #64748b;
+            animation: bounce 2s infinite;
+        }
+
+        /* 카드 및 컨텐츠 섹션 */
+        .section {
+            margin-bottom: 60px;
+        }
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .tag {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        .card h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #f1f5f9;
+        }
+        .card p {
+            font-size: 14px;
+            color: #cbd5e1;
+            word-break: keep-all;
+        }
+
+        /* 수치 하이라이트 박스 */
+        .stat-box {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border-radius: 20px;
+            padding: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: 900;
+            color: #ffffff;
+        }
+        .stat-label {
+            font-size: 13px;
+            color: #e0e7ff;
+            margin-top: 4px;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0 20px 0;
+            font-size: 12px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero" data-aos="fade-up" data-aos-duration="1000">
+        <h1>나눔이 만든 작은 기적 ✨</h1>
+        <p>임직원 여러분의 정기기부로 시작된<br>따뜻한 변화의 이야기입니다.</p>
+        <div class="scroll-down">↓ 아래로 스크롤하여 확인하기</div>
+    </div>
+
+    <div class="section">
+        <div class="stat-box" data-aos="zoom-in" data-aos-duration="800">
+            <div class="stat-label">2026 누적 기부금</div>
+            <div class="stat-number">12,500,000 원</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="card" data-aos="fade-right" data-aos-duration="800">
+            <span class="tag">아동·청소년 지원</span>
+            <h2>"꿈을 향해 한 걸음 더 나아갑니다"</h2>
+            <p>조손가정 지훈이(가명)에게 IT 학습 기기와 코딩 교육을 지원하여 미래 프로그래머의 꿈을 응원하고 있습니다.</p>
+        </div>
+
+        <div class="card" data-aos="fade-left" data-aos-duration="800">
+            <span class="tag">독거노인 돌봄</span>
+            <h2>따뜻한 온기를 담은 영양 도시락</h2>
+            <p>지역사회 홀몸 어르신 가구에 매주 정기적으로 영양 도시락과 생필품을 직접 전달해 드리고 있습니다.</p>
+        </div>
+    </div>
+
+    <div class="footer" data-aos="fade-up">
+        <p>사내 CSR 사회공헌팀</p>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        // 스크롤 애니메이션 초기화 실행
+        AOS.init({
+            once: false, // 스크롤 올렸다 내릴 때마다 반복 재생
+            offset: 120  // 애니메이션이 시작될 스크롤 위치
+        });
+    </script>
+</body>
+</html>
