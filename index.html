@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Actions Showcase</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.6;
+            padding-top: 70px;
+            max-width: 650px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        /* 헤더 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: rgba(13, 17, 23, 0.95);
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: #f0f6fc;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .logo {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f0f6fc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 슬라이드 사이드바 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background-color: #161b22;
+            border-right: 1px solid #30363d;
+            z-index: 200;
+            transition: left 0.3s ease;
+            padding: 24px 20px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-menu a {
+            color: #c9d1d9;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            display: block;
+            cursor: pointer;
+        }
+
+        .sidebar-menu a:hover {
+            color: #58a6ff;
+        }
+
+        /* 배경 어둡게 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 150;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* 본문 내 이미지 (1. Overview 클릭 시 나타남) */
+        .page-image-container {
+            display: none;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .page-image-container.active {
+            display: block;
+        }
+
+        .page-image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid #30363d;
+            display: block;
+        }
+
+        /* 메인 컨텐츠 */
+        .container {
+            padding: 20px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            color: #7ee787;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 15px;
+            color: #8b949e;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <button class="menu-btn" id="openBtn">☰</button>
+        <div class="logo">⚡ GitHub Actions</div>
+        <div style="width: 22px;"></div>
+    </header>
+
+    <div class="overlay" id="overlay"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span style="font-weight: 700; color: #f0f6fc;">Menu</span>
+            <button class="sidebar-close" id="closeBtn">✕</button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a id="firstMenuBtn">1. Overview</a></li>
+            <li><a href="#">2. Features</a></li>
+            <li><a href="#">3. Marketplace</a></li>
+            <li><a href="#">4. Documentation</a></li>
+            <li><a href="#">5. Pricing</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="page-image-container" id="imageContainer">
+            <img src="overview.jpeg" alt="">
+        </div>
+
+        <div class="hero">
+            <h1>Automate your workflow</h1>
+            <p>GitHub Actions showcase page</p>
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const openBtn = document.getElementById('openBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const firstMenuBtn = document.getElementById('firstMenuBtn');
+        const imageContainer = document.getElementById('imageContainer');
+
+        openBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+        });
+
+        function closeMenu() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        closeBtn.addEventListener('click', closeMenu);
+        overlay.addEventListener('click', closeMenu);
+
+        firstMenuBtn.addEventListener('click', () => {
+            closeMenu();
+            imageContainer.classList.add('active');
+        });
+    </script>
+</body>
+</html>
