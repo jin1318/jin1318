@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Actions Showcase</title>
+
+    <!-- AOS 스크롤 애니메이션 라이브러리 -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.6;
+            padding-top: 70px;
+            max-width: 650px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        /* 1. 상단 고정 헤더 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: rgba(13, 17, 23, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: #f0f6fc;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .logo {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f0f6fc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 2. 슬라이드 사이드바 메뉴 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background-color: #161b22;
+            border-right: 1px solid #30363d;
+            z-index: 200;
+            transition: left 0.3s ease;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-menu a {
+            color: #c9d1d9;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            display: block;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .sidebar-menu a:hover {
+            color: #58a6ff;
+        }
+
+        /* 배경 어둡게 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 150;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 3. 이미지 모달 (팝업창) */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .image-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 16px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-top: 24px;
+            display: block;
+        }
+
+        /* 메인 본문 컨텐츠 */
+        .container {
+            padding: 20px;
+        }
+
+        .hero {
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(56, 139, 253, 0.15);
+            color: #58a6ff;
+            border: 1px solid rgba(56, 139, 253, 0.4);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #7ee787, #aff5b4, #58a6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 15px;
+            color: #8b949e;
+            word-break: keep-all;
+        }
+
+        .feature-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #238636, #2ea043, #58a6ff);
+        }
+
+        .card-tag {
+            font-size: 12px;
+            font-weight: 700;
+            color: #7ee787;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f0f6fc;
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: #8b949e;
+            word-break: keep-all;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0 20px 0;
+            font-size: 12px;
+            color: #484f58;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 상단 헤더 -->
+    <header class="header">
+        <button class="menu-btn" id="openBtn">☰</button>
+        <div class="logo">⚡ GitHub Actions</div>
+        <div style="width: 22px;"></div>
+    </header>
+
+    <!-- 오버레이 배경 -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- 좌측 슬라이드 사이드바 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span style="font-weight: 700; color: #f0f6fc;">Menu</span>
+            <button class="sidebar-close" id="closeBtn">✕</button>
+        </div>
+        <ul class="sidebar-menu">
+            <!-- 첫 번째 메뉴 항목 클릭 시 이미지 팝업 모달 실행 -->
+            <li><a id="firstMenuBtn">1. Overview (이미지 보기)</a></li>
+            <li><a href="#">2. Features</a></li>
+            <li><a href="#">3. Marketplace</a></li>
+            <li><a href="#">4. Documentation</a></li>
+            <li><a href="#">5. Pricing</a></li>
+        </ul>
+    </nav>
+
+    <!-- 이미지 팝업 모달 -->
+    <div class="image-modal" id="imageModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalCloseBtn">✕</button>
+            <h3 style="font-size: 16px; color: #f0f6fc;">Overview Image</h3>
+            <!-- 내장 이미지 -->
+            <img id="popupImage" src="" alt="Overview Image">
+        </div>
+    </div>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="container">
+        <div class="hero" data-aos="fade-down" data-aos-duration="1000">
+            <span class="badge">⚡ GitHub Actions</span>
+            <h1>Automate your workflow<br>from idea to production</h1>
+            <p>GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD.</p>
+        </div>
+
+        <div class="feature-card" data-aos="fade-up" data-aos-duration="800">
+            <span class="card-tag">Build & Test</span>
+            <h2 class="card-title">Automate every step of your process</h2>
+            <p class="card-desc">Kick off workflows with GitHub events like push, issue creation, or a new release.</p>
+        </div>
+
+        <div class="feature-card" data-aos="fade-up" data-aos-duration="800">
+            <span class="card-tag">Multi-Platform</span>
+            <h2 class="card-title">Any OS, any language, any cloud</h2>
+            <p class="card-desc">Run your workflows on Linux, macOS, Windows, ARM, and containers seamlessly.</p>
+        </div>
+
+        <div class="footer">
+            GitHub Actions Full Showcase
+        </div>
+    </div>
+
+    <!-- AOS 애니메이션 JS -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({ once: false, offset: 80 });
+
+        // 이미지 데이터 (Base64 형식)
+        const imageBase64 = "data:image/jpeg;base64,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x79/s3vfX/N+vGf22p9p33u/wC/61e88vbfSfe3+/2/5pr2433/AAtfx3x62+93/bbfXv/AJq7q3v5O3f5vD79f9a88vbdPv8Ae/v/AL+r58p1/wCff/X/AM6fr0x/O+X3t7P33P38m3f3f/O1+82+P7a9/wDP2+0/21539S838+X5/S11X/M4+/342f53p1/L/q4e9m9d59M721v5eX3+aA7I/66+9f+/p/3XnH12X15fv01I/8AW8v/AFf2f8V53x98eM/d61i43a9H/L/E47a242/f4e39vf8fP3qBf41q28m/u/v+X2214x/uI6O7+X012vL7vL91/m/vWd4Xv0vGfXpvh3H4M7295a/m/993q4fjcI1/y1xte9vf3f2e+vh39q/j/i33/Hfv8A631023+9z79/u9/r2r9L4v5p490Xf3/mff8A3f8AOm/v72e7/wCe3s682/L3ff8Afz3/AM9S08vf/v5ffvf/AL2/5o9vG2fm11Lp7vL/AL3N/m25qS4/y5m25ff9/Pfe9Xo3+9+X8XnfXv8Av+233/y/89Q0v++v/ff5/f5+/S/13+1Xf6dE/P8A41X36X3m1R/3/f3050L9+r/vvf2X3S39/wDM/vqA/U2m/sXm7f8AH33/AM/99vQf5m/bvx0X/O+ff338n33/AD0I/wC6fe9/ffv0G3u8/m3+7Xbf/e3f/f5/Svv/ANvT5n43EfhS/n2ff++2222u6z++1ffvf53u9O5e8/f3e/P/AFdf3/D+92/m3/32s3/u23P1Xv2vN3+v/PXt6vU1m/4P9b4/mE/sN/m++P6v216z9y3P8s8/f7vf8f/AB0p9t++116+X29/3/O/+/m85Iu+n+/3++fX/v071/G/7/e/0fXpf6d3s/28vP3N2/G+/wCz/P/AJoH1W3/AHzf53/N++285o2m2739/v0/l6+/07bf+/0Xf739vd9v5u3f9+tL+V2X+Xp9xbb1P/O+3t/d/v0X13Lbe/i8vfbf93/df1u/4f8Ae9/vf/f9S33/AG/vf5+Xbfv05uI/y8/y95/l0f28e2+X/d8P/vf33/dfS3444/s1vbf5f43p3q4f8eX93f3f/wBP1134y++f/Tffyff/ADv3r5s+e/M336X9Xbfy++f+v30164e29/Xy/s3+ff30X22+P0p+Yx2/D/61/F+3e/wff3fXpt6/f7u3p6eT/m32e/43f/39v82vfO/8e+vP3X2bfvfbfvv4d/4v041/k6/e9/f4e2+/u8/3fbfm01r4S8b3f4+/3/r/ANaX2X++v338u/f/AN++2vf2/f2m/Nbb/P3/AOf3/S+49sO+f22X91959M2X3rbf36/Pvf/AHp4f3Lbfn8d4ev3ff8AP9Svh/L9+Xb71v8A7+/2279A8e+f/T/f4Xvf5e/494X++fvL/e5/m/e3ptvef8UvS7f+Xy+9370u2+L+/f2e226+G+492/6v+9+bO+lG93n8f993f/ev+9q0p+a430u++v/0f77S8/v3n/f0vXf/O9e/v/S/Xb/vf215589vvx+/f3/m07bf3v5P49v3f/32rS3jH56/Ld3e++l717e/v4vf7+/l9d/Ppt665vv+/93s8Xf+f3fO31a89/4uP9fT5+/d+f2f8An/L1/f8AtS+/z+/4/n29v3m3r3qfn4S/d3v6323xbeXf/Pvf7v8Ax/10Xvvd5t++ffL/AI+/31P9Xf29910++/z0X+3d5s/+/S+v447++v3+/vXf4vpt6P1Gz7L4O528Xnpt/j6v60P3vN5/s/3e+f8/v2/L9vv2L6/m2202X9X3t3/f28vf682/4nO7m32vfzf6n/N36/wA2/vU6/c1L9P29f2Xv27b/AH+33/zf+/8A9+G+X3r68+/x+z42vpt4/wDfP/n49223sXjS503+a/2y215vTpt++3/0rS3jfD167ff5+/f+1f0m7bf2vfv/AH/v0/57bdf/AE+bfd/e4+veflp18++2f+92/ve/x/1e2xvb/vfN/m8//e3f/d5aL03f8pXvX29fvvvf/Ovf6/3t99S337b/AN39e/10vf3/APe69p5/1u/v+dve+e++/Uv35N8v9vb5N95++/8Afu39/v6a3r3+3s/6b3l+e3+fv5f89O9/l210v1e/t9vv/X23p5Xf4vO/sXf7/d9f3/9d9Svf/v/AJd9ffm9Xp1/y/4u313fOft03m/8+neX7+/97S+O+/i9vf7v0/N+15+N191+/m029e/vf2a3a56vf35vd3v7m9/u+m02111f93fvv72/ffv0G3/ALvf02+8216Xv/fP3s71+/e3/L3962/83v69vv4/d031633Xv5a8/Mvbfp+33f5vf3/ADr6Ufeevvff25/f79N4X2f3/m3d93l9O87v2/D2z73/fvf3/vf9f1/l5+/X3m99ffbXb+v/eXbflX/AM/f2ev4r/l4/e+v3/f9ffm33+f33fS+82+2f5u23/aP++b+d3a2/tff3/v8/wB62vf79M6/fN+3f61u4O7+9lX/AE+/Xb+Xfb/df0v4P26ff2/30vf4m2x+/N43e9/3+m3vf/e5s/f675fXpL9vf4/2/P1vvvv/ANbf9/8Anf8An2L/AKX32vv/AG/6+G8/+2e2/Xrf006ff2bf3/b9v3t7/df3qfl22vG39e8v+3y6eLpttv3eX4S0f13/AC8/9aG1s13bf36/9/t4a1bf+d393+fbfXptL9f+dvevptN/1aA/P/f+xLff/f593qS+E3y1p+e3vfzf9+m75N13/v6729L++HbbftX22e032L1/fe21vfXffbvf/e6++l3x+e/l+/XdfdfSvf/AFO/tqW1/t1N3m/m+m83f4XpX73+L+/35+/l0/0pff4v73fb3/n4vT/Tf39vf93s/wC5e12++e1v2vL9/vf9+S4p9vvf/T+2/df5Otfv4e/S/d9ff4vpt4v4/r8N23u/i/l/6vPvfS/v2x5f8vf339S/l/ffs1vf0vv/ADef3X3pfa/8y7e++l9Xff366m01aX/G++v234b3fze/41/Nvb993d/33m/+8u+/N1v4vd9f13vfX6bfv6fvq+XbfL1a89ff70vvd3m2x711P2/33u+9/mS20/e8Xk76/fzf5/m1vO3L/a+9ffbb0vvd/L33pt3/AN/ffXb2vf8Atbfv/m/Lbfn1+/S9++/vXpt79Xbf5f7fpttr0vv2220vpt4/4v43v3t4/ffp4fef947+/X3f29S2/wDvX7//AH315f3f+9/v9/vf8e/v/wAtv0/Xf17a/vvv+/22vv4+u/S++2vX++lXm+/3ff3b8Xp2301f2/b839vf8/Ppt7/f5vL9L5/i+/b99918Xdf9f3v+lfa99+P/AH2/5e3+3m/2e+/bVd7/AN/P3SfvL733P4a41f6Ntt4vO+s/v2/Lp4f/ADe3v0vf363vf/O3j91vX39+/wCf1L5f2/L77/vf/PvfS++/7/D323t39vdfz5+/W1vf9ff0/ff34+1/S2//AH/Dfb3r+9m9NffxX/0239/38e05f03v7a88sft/f764x+3f7f8An/vf/OteP+N/f++r6m312vf2v7f4u3f0fX6/zbf+d08e923L7fS/bfTdfvfV5/0/N1v9v/09S22/z2Xv7f10137Xvf0++99Xbf19v+P+5Nf/AKu/+dfi/bfNvvxbfS3/AM83n7f1a3038G8/6/2vA60aX9/6f4vf5ff7+/v/AAnfL9S/v1619L/5/vf0m28+f0/f11N/q9/y769v417fv+l6272/069a30t+9fbb/H4u2v32/1v1X9aL9b/LffXvv219v9fptv3p1N5X03f833+O/t32/LpU3vf13vO/4/Tftf6b/AH/vfdfy6W/vS34X/vv8/a9vf9v71vS9/bf9fbbz6/zfa/3s7x79L+f21133f/P30u/+9e4/+ff9+/02/v4v/e2vvt0veftt+/6X70vtffptp/Xf4/vf6e8/8993+N/tX283+fv08fD+37f90sXptf3+m/D59P2m10v8AT2Xpvevf3+lXvv8Ars++e/x+393eXvf4tbe9fbbffm/ff34X9O3X3vf3+/e39/O4e3uL3+35qX8/H/l/ff8A9+/vfS+/8m63XvP3/H13x403m/zf++m/+a/n3623n/12vv8AH3a3v/e0u++/f793S19/bf8Ae8m17Xvf/P8Azb+v9N+/f/f4/Xvf/O21m299S999/T7f4ff9/XN17/m6+/v/AF4/b30u+2/m/wAvv/T/AHv2/S25p3f2bf8Affbbfv427+P0/b139NfXef8Anv1/F7bfT/qS++/m/vpt9SvfXm361++/vf0u2v2v3/e6+b/A0vfXj36eL/e/85a/e3v3N24e+H56s298/99/335v9S+m1192vf3/vf+Gtrb1/9Xv4fv+/s/yXf+/3/vf/AOXfS+3b39PevpvefbfS9v42m/t/S20v21+/m2/T3eX/AH+bXv020/P/AF0p+f8Am8m11vbfpvd03m2+L/n+9+/p+20/38P00vf2vf8AevPvf63b/bfdfT+/9S8ffy29X+fXj3vv6+H3238++f39/X9SffX9vP8Ae/ffv3+3m/p5tfS++/bfXf8AG99L+9vffs2/e+d+Hvf9T76/t/nS/v8A4/L7/aXff4+f9v27+Hvf0u35u+/f312/D08f0/T+v6X3m3bbf6Xb3X/b+v3X37a/C25vO/Xp5N/m/pft938Nf/e/6eXbftv1/09/r8N/rbfXm2vX0v300vdvpt/s/wBvv/d9ff043vf76W/Htf8A3a436e29+/vf9fbfS+/vfvfv+l9a36dfS9/T+fX07X19L+v73919fX+9+O3+/v/AOn/AH+3300vP+f8vef2vf1vXf8Avf8Avb++v/e26/vdf8fvvvf2s0vv+N/bW98//e+/8129/jff09vXffm65q239m+/f1vf3/e3++/++Xv9vfV736fS23v/ADevpfvX7/f9f3X636df0099N3p4dfTvf4f++/j16a1+/vfXv+36bX69/mX0v1336a/P/d3v63ve/i+/p/vf2m9/Xvf+f5fS2X/3a3s1/j1bW9+f2e96XfN3/b382m+/f76m++/xvd/f/vW98vfve/a/e+/+m2mXv/n48e23vf4e++/S+u3m6693+Dpt++vv93iXp4df0/m1vv3a9v2f7/4fbS+/m6++/S/0t3++/vf+3pX0S+/vTfvv60t/vv8AMv1v8Xft+XvvS3//2Q==";
+
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const openBtn = document.getElementById('openBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const firstMenuBtn = document.getElementById('firstMenuBtn');
+        const imageModal = document.getElementById('imageModal');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const popupImage = document.getElementById('popupImage');
+
+        // 이미지 소스 설정
+        popupImage.src = imageBase64;
+
+        // 메뉴 열기/닫기
+        openBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+        });
+
+        function closeMenu() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        closeBtn.addEventListener('click', closeMenu);
+        overlay.addEventListener('click', closeMenu);
+
+        // 첫 번째 메뉴 클릭 시 팝업 띄우기
+        firstMenuBtn.addEventListener('click', () => {
+            closeMenu(); // 메뉴 닫기
+            imageModal.classList.add('active'); // 모달 팝업 열기
+        });
+
+        // 팝업 모달 닫기
+        modalCloseBtn.addEventListener('click', () => {
+            imageModal.classList.remove('active');
+        });
+
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                imageModal.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
