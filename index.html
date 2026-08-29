@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Actions Showcase</title>
+
+    <!-- AOS 스크롤 애니메이션 라이브러리 -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.6;
+            padding-top: 70px;
+            max-width: 650px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        /* 1. 상단 고정 헤더 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: rgba(13, 17, 23, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: #f0f6fc;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .logo {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f0f6fc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 2. 슬라이드 사이드바 메뉴 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background-color: #161b22;
+            border-right: 1px solid #30363d;
+            z-index: 200;
+            transition: left 0.3s ease;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-menu a {
+            color: #c9d1d9;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            display: block;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .sidebar-menu a:hover {
+            color: #58a6ff;
+        }
+
+        /* 배경 어둡게 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 150;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 메인 컨텐츠 영역 */
+        .container {
+            padding: 20px;
+        }
+
+        .hero {
+            min-height: 40vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(56, 139, 253, 0.15);
+            color: #58a6ff;
+            border: 1px solid rgba(56, 139, 253, 0.4);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #7ee787, #aff5b4, #58a6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 15px;
+            color: #8b949e;
+            word-break: keep-all;
+        }
+
+        /* 본문 내 이미지 컨테이너 (숨김 상태 기본값) */
+        .image-view-card {
+            display: none;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .image-view-card.active {
+            display: block;
+        }
+
+        .image-view-card img {
+            width: 100%;
+            max-height: 600px;
+            object-fit: contain;
+            border-radius: 12px;
+            display: block;
+        }
+
+        /* 메인 기능 카드리스트 */
+        .feature-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #238636, #2ea043, #58a6ff);
+        }
+
+        .card-tag {
+            font-size: 12px;
+            font-weight: 700;
+            color: #7ee787;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f0f6fc;
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: #8b949e;
+            word-break: keep-all;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0 20px 0;
+            font-size: 12px;
+            color: #484f58;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 상단 헤더 -->
+    <header class="header">
+        <button class="menu-btn" id="openBtn">☰</button>
+        <div class="logo">⚡ GitHub Actions</div>
+        <div style="width: 22px;"></div>
+    </header>
+
+    <!-- 오버레이 배경 -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- 좌측 슬라이드 사이드바 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span style="font-weight: 700; color: #f0f6fc;">Menu</span>
+            <button class="sidebar-close" id="closeBtn">✕</button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a id="firstMenuBtn">1. Overview</a></li>
+            <li><a href="#">2. Features</a></li>
+            <li><a href="#">3. Marketplace</a></li>
+            <li><a href="#">4. Documentation</a></li>
+            <li><a href="#">5. Pricing</a></li>
+        </ul>
+    </nav>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="container">
+        <div class="hero" data-aos="fade-down" data-aos-duration="1000">
+            <span class="badge">⚡ GitHub Actions</span>
+            <h1>Automate your workflow<br>from idea to production</h1>
+            <p>GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD.</p>
+        </div>
+
+        <!-- 클릭 시 페이지 본문 내 노출되는 이미지 카드 영역 -->
+        <div class="image-view-card" id="imageViewCard">
+            <img id="mainImage" src="overview.jpg" alt="Overview">
+        </div>
+
+        <!-- 본문 요소들 -->
+        <div class="feature-card" data-aos="fade-up" data-aos-duration="800">
+            <span class="card-tag">Build & Test</span>
+            <h2 class="card-title">Automate every step of your process</h2>
+            <p class="card-desc">Kick off workflows with GitHub events like push, issue creation, or a new release.</p>
+        </div>
+
+        <div class="feature-card" data-aos="fade-up" data-aos-duration="800">
+            <span class="card-tag">Multi-Platform</span>
+            <h2 class="card-title">Any OS, any language, any cloud</h2>
+            <p class="card-desc">Run your workflows on Linux, macOS, Windows, ARM, and containers seamlessly.</p>
+        </div>
+
+        <div class="footer">
+            GitHub Actions Full Showcase
+        </div>
+    </div>
+
+    <!-- AOS 애니메이션 JS -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({ once: false, offset: 80 });
+
+        // 백업용 이미지 (로컬 파일 로드 실패 시 자동 적용)
+        const fallbackBase64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1eb12Afl5ed1hzm3W1na7Afl3/2wBDAREDERATGBcbGBcbU04dTlNTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1P/wAARCAEgASADASIAAhEBAxEB/8QAGwAAAgMBAQEAAAAAAAAAAAAAAwQCBQEABgj/xAA5EAACAQMCBAUDAgQGAgMBAAABAgMABBESIQUTMUEiUWFxgTKRoRRCsDNSwdEVI2Jy4fAk8UNjwv/EABgBAAMBAQE~~~~~~~~";
+
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const openBtn = document.getElementById('openBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const firstMenuBtn = document.getElementById('firstMenuBtn');
+        const imageViewCard = document.getElementById('imageViewCard');
+        const mainImage = document.getElementById('mainImage');
+
+        // 로컬 이미지 로드 실패 시 대체 이미지 로드 설정
+        mainImage.onerror = function() {
+            this.src = fallbackBase64;
+        };
+
+        // 사이드바 메뉴 열기/닫기
+        openBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+        });
+
+        function closeMenu() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        closeBtn.addEventListener('click', closeMenu);
+        overlay.addEventListener('click', closeMenu);
+
+        // 첫 번째 메뉴(1. Overview) 클릭 시 페이지 내부 카드 노출
+        firstMenuBtn.addEventListener('click', () => {
+            closeMenu();
+            imageViewCard.classList.add('active');
+            
+            // 이미지 위치로 부드럽게 스크롤
+            imageViewCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    </script>
+</body>
+</html>
