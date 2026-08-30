@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fresh Grove Clone</title>
+  <style>
+    /* 기본 리셋 및 폰트 설정 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #111111;
+      background-color: #ffffff;
+      line-height: 1.5;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* 1. 상단 내비게이션 바 (노란색) */
+    .header {
+      background-color: #FFE000;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .hamburger-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+    .header-right .cart-btn {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* 서브 서브 메뉴 바 */
+    .sub-nav {
+      background-color: #FFE000;
+      padding: 10px 20px 15px;
+      display: flex;
+      gap: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    /* 2. 메인 슬라이더 / 메인 비주얼 세션 */
+    .hero-banner {
+      position: relative;
+      background-color: #777; /* 이미지 대체 배경 */
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #ffffff;
+      padding: 40px 20px;
+      /* 실제 이미지를 넣을 때 사용: 
+         background: url('이미지경로') center/cover no-repeat; */
+    }
+    .hero-content h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      max-width: 320px;
+      margin: 0 auto 15px;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+    .hero-btn {
+      display: inline-block;
+      padding: 8px 20px;
+      border: 1px solid #ffffff;
+      color: #ffffff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    .dots-indicator {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+    }
+    .dot.active {
+      background-color: #fff;
+    }
+
+    /* 3. 메인 콘텐츠 영역 (연베이지 배경) */
+    .main-section {
+      background-color: #FAF8EE;
+      padding: 50px 20px;
+      text-align: center;
+    }
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: #555555;
+      margin-bottom: 40px;
+    }
+
+    /* 상품 카드 그리드 */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr); /* 모바일 기본: 1열 */
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      background-color: #ffffff;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* 카드 배경 이미지 처리 공간 */
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* 4. 푸터 영역 */
+    .footer {
+      background-color: #FAF8EE;
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid #e5e3d7;
+      font-size: 0.8rem;
+      color: #777;
+    }
+
+    /* 데스크톱 / 태블릿 반응형 스타일 */
+    @media (min-width: 768px) {
+      .header {
+        padding: 15px 40px;
+      }
+      .sub-nav {
+        padding: 10px 40px 15px;
+        gap: 30px;
+      }
+      .hero-banner {
+        min-height: 550px;
+      }
+      .hero-content h1 {
+        font-size: 2.5rem;
+        max-width: 600px;
+      }
+      .product-grid {
+        grid-template-columns: repeat(3, 1fr); /* PC / 태블릿: 3열 */
+      }
+      .product-card {
+        height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. 상단 노란색 헤더 -->
+  <header class="header">
+    <div class="header-left">
+      <button class="hamburger-btn" aria-label="메뉴 열기">☰</button>
+      <div class="logo">Fresh Grove</div>
+    </div>
+    <div class="header-right">
+      <a href="#" class="cart-btn">Cart</a>
+    </div>
+  </header>
+
+  <!-- 서브 메뉴 (ABOUT / SHOP / EVENT / REVIEW) -->
+  <nav class="sub-nav">
+    <a href="#">ABOUT</a>
+    <a href="#">SHOP</a>
+    <a href="#">EVENT</a>
+    <a href="#">REVIEW</a>
+  </nav>
+
+  <!-- 2. 히어로 배너 (메인 슬라이더) -->
+  <section class="hero-banner">
+    <div class="hero-content">
+      <h1>FEEL FREE TO CHOOSE THE OPTION THAT YOU WANT!</h1>
+      <a href="#" class="hero-btn">VIEW MORE</a>
+    </div>
+    <div class="dots-indicator">
+      <span class="dot"></span>
+      <span class="dot active"></span>
+      <span class="dot"></span>
+    </div>
+  </section>
+
+  <!-- 3. 메인 콘텐츠 섹션 (MEET OUR DRINKS!) -->
+  <main class="main-section">
+    <h2 class="section-title">MEET OUR DRINKS!</h2>
+    <p class="section-subtitle">Explore our range of products, each with its own unique taste and characteristics.</p>
+
+    <div class="product-grid">
+      <!-- 추후 이미지를 background-image 또는 <img> 태그로 대체할 위치입니다. -->
+      <div class="product-card" style="background-color: #e2e8f0;">[ 이미지 위치 1 ]</div>
+      <div class="product-card" style="background-color: #cbd5e1;">[ 이미지 위치 2 ]</div>
+      <div class="product-card" style="background-color: #94a3b8;">[ 이미지 위치 3 ]</div>
+    </div>
+  </main>
+
+  <!-- 4. 푸터 -->
+  <footer class="footer">
+    <p>Made by Your Brand © 2026</p>
+  </footer>
+
+</body>
+</html>
